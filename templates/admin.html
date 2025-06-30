@@ -1,0 +1,510 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - WiFi Cafe Manager</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+
+        .nav-link {
+            display: inline-block;
+            color: #667eea;
+            text-decoration: none;
+            margin: 0 12px;
+            padding: 12px 20px;
+            border: 2px solid #667eea;
+            border-radius: 25px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .panel {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            border: 2px solid #e9ecef;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        .panel h3 {
+            color: #495057;
+            margin-bottom: 25px;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #495057;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        input[type="text"], input[type="password"], input[type="number"] {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: #fff;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 10px 25px rgba(108, 117, 125, 0.3);
+        }
+
+        .session-info {
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            border: 3px solid #e9ecef;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 25px;
+            white-space: pre-line;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .status-message {
+            margin-top: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .error {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 5px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px 20px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            color: #6c757d;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .credential-display {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 5px solid #667eea;
+            margin-top: 20px;
+        }
+
+        .credential-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+        }
+
+        .credential-label {
+            font-weight: 600;
+            color: #1976d2;
+        }
+
+        .credential-value {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-shield-alt"></i> Admin Control Center</h1>
+            <p style="color: #6c757d; font-size: 1.1rem;">Manage your WiFi Cafe sessions and settings</p>
+        </div>
+
+        <div class="nav-links">
+            <a href="/" class="nav-link"><i class="fas fa-home"></i> Home</a>
+            <a href="/sessions" class="nav-link"><i class="fas fa-users"></i> Active Sessions</a>
+            <a href="/wifi" class="nav-link"><i class="fas fa-wifi"></i> WiFi Bridge</a>
+        </div>
+
+        <div class="panel">
+            <h3><i class="fas fa-key"></i> Admin Authentication</h3>
+            <div class="form-group">
+                <label for="adminUsername"><i class="fas fa-user"></i> Username:</label>
+                <input type="text" id="adminUsername" value="admin" readonly style="background: #f8f9fa;">
+            </div>
+            <div class="form-group">
+                <label for="adminPassword"><i class="fas fa-lock"></i> Password:</label>
+                <input type="password" id="adminPassword" placeholder="Enter admin password">
+            </div>
+            <button class="btn" onclick="adminLogin()">
+                <i class="fas fa-sign-in-alt"></i> Login to Admin Panel
+            </button>
+            <div id="loginStatus"></div>
+        </div>
+
+        <div class="panel hidden" id="adminPanel">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('sessions')">
+                    <i class="fas fa-plus-circle"></i> Create Sessions
+                </button>
+                <button class="tab" onclick="switchTab('password')">
+                    <i class="fas fa-key"></i> Change Password
+                </button>
+            </div>
+
+            <div id="sessionsTab">
+                <h3><i class="fas fa-user-plus"></i> Create New User Session</h3>
+                <div style="background: #e3f2fd; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                    <p><i class="fas fa-info-circle"></i> <strong>Session Info:</strong> Username: 4 characters, Password: 6 characters</p>
+                </div>
+                <div class="form-group">
+                    <label for="timeLimit"><i class="fas fa-clock"></i> Time Limit (minutes):</label>
+                    <input type="number" id="timeLimit" min="5" max="480" value="60" placeholder="Enter time in minutes">
+                </div>
+                <button class="btn" onclick="createSession()">
+                    <i class="fas fa-magic"></i> Generate Session Credentials
+                </button>
+                <div id="sessionStatus"></div>
+                <div id="sessionInfo" class="credential-display hidden"></div>
+            </div>
+
+            <div id="passwordTab" class="hidden">
+                <h3><i class="fas fa-shield-alt"></i> Change Admin Password</h3>
+                <div class="form-group">
+                    <label for="currentPassword"><i class="fas fa-lock"></i> Current Password:</label>
+                    <input type="password" id="currentPassword" placeholder="Enter current password">
+                </div>
+                <div class="form-group">
+                    <label for="newPassword"><i class="fas fa-key"></i> New Password:</label>
+                    <input type="password" id="newPassword" placeholder="Enter new password (min 8 characters)">
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword"><i class="fas fa-check"></i> Confirm New Password:</label>
+                    <input type="password" id="confirmPassword" placeholder="Confirm new password">
+                </div>
+                <button class="btn" onclick="changePassword()">
+                    <i class="fas fa-save"></i> Update Password
+                </button>
+                <div id="passwordStatus"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isAdminLoggedIn = false;
+        let activeTab = 'sessions';
+
+        function showMessage(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            const icon = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-triangle';
+            element.innerHTML = `<div class="status-message ${type}"><i class="${icon}"></i>${message}</div>`;
+        }
+
+        function switchTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Show/hide tab content
+            document.getElementById('sessionsTab').classList.toggle('hidden', tab !== 'sessions');
+            document.getElementById('passwordTab').classList.toggle('hidden', tab !== 'password');
+            
+            activeTab = tab;
+        }
+
+        async function adminLogin() {
+            const username = document.getElementById('adminUsername').value;
+            const password = document.getElementById('adminPassword').value;
+
+            if (!username || !password) {
+                showMessage('loginStatus', 'Please enter both username and password', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showMessage('loginStatus', 'Login successful! Welcome to admin panel', 'success');
+                    document.getElementById('adminPanel').classList.remove('hidden');
+                    isAdminLoggedIn = true;
+                    document.getElementById('adminPassword').value = '';
+                } else {
+                    showMessage('loginStatus', result.message, 'error');
+                }
+            } catch (error) {
+                showMessage('loginStatus', 'Connection error. Please try again.', 'error');
+            }
+        }
+
+        async function createSession() {
+            if (!isAdminLoggedIn) {
+                showMessage('sessionStatus', 'Please login first', 'error');
+                return;
+            }
+
+            const timeLimit = parseInt(document.getElementById('timeLimit').value);
+
+            if (!timeLimit || timeLimit < 5) {
+                showMessage('sessionStatus', 'Please enter a valid time limit (minimum 5 minutes)', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/admin/create_session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ time_limit: timeLimit })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showMessage('sessionStatus', 'Session created successfully!', 'success');
+                    
+                    const sessionInfo = document.getElementById('sessionInfo');
+                    sessionInfo.innerHTML = `
+                        <h4 style="margin-bottom: 15px; color: #1976d2;"><i class="fas fa-ticket-alt"></i> New Session Created</h4>
+                        <div class="credential-item">
+                            <span class="credential-label">Username:</span>
+                            <span class="credential-value">${result.username}</span>
+                        </div>
+                        <div class="credential-item">
+                            <span class="credential-label">Password:</span>
+                            <span class="credential-value">${result.password}</span>
+                        </div>
+                        <div class="credential-item">
+                            <span class="credential-label">Duration:</span>
+                            <span class="credential-value">${result.time_limit} minutes</span>
+                        </div>
+                        <div class="credential-item">
+                            <span class="credential-label">Expires:</span>
+                            <span class="credential-value">${result.expires_at}</span>
+                        </div>
+                        <div style="margin-top: 15px; padding: 10px; background: rgba(255, 255, 255, 0.8); border-radius: 8px; text-align: center;">
+                            <i class="fas fa-info-circle"></i> Provide these credentials to the user
+                        </div>
+                    `;
+                    sessionInfo.classList.remove('hidden');
+                } else {
+                    showMessage('sessionStatus', result.message, 'error');
+                }
+            } catch (error) {
+                showMessage('sessionStatus', 'Connection error. Please try again.', 'error');
+            }
+        }
+
+        async function changePassword() {
+            if (!isAdminLoggedIn) {
+                showMessage('passwordStatus', 'Please login first', 'error');
+                return;
+            }
+
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                showMessage('passwordStatus', 'Please fill in all password fields', 'error');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                showMessage('passwordStatus', 'New passwords do not match', 'error');
+                return;
+            }
+
+            if (newPassword.length < 8) {
+                showMessage('passwordStatus', 'New password must be at least 8 characters long', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/admin/change_password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        current_password: currentPassword,
+                        new_password: newPassword,
+                        confirm_password: confirmPassword
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showMessage('passwordStatus', 'Password changed successfully!', 'success');
+                    // Clear form fields
+                    document.getElementById('currentPassword').value = '';
+                    document.getElementById('newPassword').value = '';
+                    document.getElementById('confirmPassword').value = '';
+                } else {
+                    showMessage('passwordStatus', result.message, 'error');
+                }
+            } catch (error) {
+                showMessage('passwordStatus', 'Connection error. Please try again.', 'error');
+            }
+        }
+
+        // Allow Enter key to submit
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                if (!isAdminLoggedIn) {
+                    adminLogin();
+                } else if (activeTab === 'sessions') {
+                    createSession();
+                } else if (activeTab === 'password') {
+                    changePassword();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

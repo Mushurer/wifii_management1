@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WiFi Setup - WiFi Cafe Manager</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .nav-links {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .nav-link {
+            display: inline-block;
+            color: #667eea;
+            text-decoration: none;
+            margin: 0 10px;
+            padding: 8px 15px;
+            border: 2px solid #667eea;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .panel {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid #e9ecef;
+        }
+
+        .panel h3 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .wifi-status {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .wifi-connected {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .wifi-disconnected {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        .networks-list {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            background: white;
+        }
+
+        .network-item {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .network-item:hover {
+            background: #f8f9fa;
+        }
+
+        .network-item.selected {
+            background: #e3f2fd;
+            border-left: 4px solid #667eea;
+        }
+
+        .network-item:last-child {
+            border-bottom: none;
+        }
+
+        .network-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .network-name {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .network-security {
+            font-size: 0.9em;
+            color: #6c757d;
+            padding: 2px 8px;
+            background: #e9ecef;
+            border-radius: 12px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #495057;
+            font-weight: 500;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .status-message {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-wifi"></i> WiFi Setup</h1>
+        </div>
+
+        <div class="nav-links">
+            <a href="/" class="nav-link"><i class="fas fa-home"></i> Home</a>
+            <a href="/admin" class="nav-link"><i class="fas fa-cog"></i> Admin</a>
+            <a href="/sessions" class="nav-link"><i class="fas fa-users"></i> Sessions</a>
+        </div>
+
+        <div class="panel">
+            <h3><i class="fas fa-signal"></i> System Status</h3>
+            <div id="systemStatus" class="wifi-status wifi-disconnected">
+                <i class="fas fa-wifi"></i> Checking system status...
+            </div>
+        </div>
+
+        <div class="panel">
+            <h3><i class="fas fa-broadcast-tower"></i> WiFi Hotspot Control</h3>
+            <button class="btn" onclick="checkStatus()">
+                <i class="fas fa-sync"></i> Refresh Status
+            </button>
+
+            <div id="hotspotContainer">
+                <div class="form-group">
+                    <label for="hotspotName">Hotspot Name (SSID):</label>
+                    <input type="text" id="hotspotName" value="WiFiCafe_Internet" placeholder="Enter hotspot name">
+                </div>
+                <div class="form-group">
+                    <label for="hotspotPassword">Hotspot Password:</label>
+                    <input type="password" id="hotspotPassword" value="cafe123456" placeholder="Enter password (min 8 chars)">
+                </div>
+                <div class="form-group">
+                    <label for="networkInterface">Network Interface:</label>
+                    <select id="networkInterface">
+                        <option value="wlan0">wlan0 (Default WiFi)</option>
+                        <option value="wlan1">wlan1 (Secondary WiFi)</option>
+                    </select>
+                </div>
+
+                <button class="btn" onclick="createBridge()" id="createBtn">
+                    <i class="fas fa-broadcast-tower"></i> Create WiFi Bridge
+                </button>
+                <button class="btn" onclick="stopBridge()" id="stopBtn" style="background: #dc3545; display: none;">
+                    <i class="fas fa-stop"></i> Stop Hotspot
+                </button>
+            </div>
+            <div id="hotspotStatus"></div>
+        </div>
+
+        <div class="panel">
+            <h3 id="deploymentInfo" style="display: none;"><i class="fas fa-cloud"></i> Cloud Deployment Info</h3>
+            <div id="deploymentInfoContent" style="background: #e7f3ff; padding: 15px; border-radius: 8px; border-left: 4px solid #667eea; display: none;">
+                <p><strong>Running on Azure:</strong></p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Manage your WiFi hotspot through this web interface.</li>
+                    <li>Internet access is controlled by your Azure VM's network settings.</li>
+                    <li>Ensure your VM has a public IP and appropriate network security group rules.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h3><i class="fas fa-info-circle"></i> Instructions</h3>
+            <div style="background: #e7f3ff; padding: 15px; border-radius: 8px; border-left: 4px solid #667eea;">
+                <p><strong>How it works:</strong></p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>This system creates a WiFi hotspot that shares your existing internet connection</li>
+                    <li>Users connect to your hotspot and use the login credentials you provide</li>
+                    <li>The system controls internet access based on session time limits</li>
+                    <li>Make sure your system has an active internet connection before creating the hotspot</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let hotspotActive = false;
+
+        function showMessage(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="status-message ${type}">${message}</div>`;
+        }
+
+        async function checkStatus() {
+            try {
+                const response = await fetch('/api/wifi/status');
+                const data = await response.json();
+
+                const statusDiv = document.getElementById('systemStatus');
+
+                // Show deployment-specific instructions
+                if (data.environment !== 'Local/Other') {
+                    document.getElementById('deploymentInfo').style.display = 'block';
+                }
+
+                if (data.internet_connected) {
+                    if (data.bridge_active && data.current_setup) {
+                        statusDiv.className = 'wifi-status wifi-connected';
+                        statusDiv.innerHTML = `<i class="fas fa-cloud"></i> ${data.current_setup} - Access Control Active (${data.environment})`;
+                        hotspotActive = true;
+                        document.getElementById('createBtn').style.display = 'none';
+                        document.getElementById('stopBtn').style.display = 'inline-block';
+                    } else {
+                        statusDiv.className = 'wifi-status wifi-disconnected';
+                        statusDiv.innerHTML = `<i class="fas fa-globe"></i> Internet Connected - Ready to activate (${data.environment})`;
+                        hotspotActive = false;
+                        document.getElementById('createBtn').style.display = 'inline-block';
+                        document.getElementById('stopBtn').style.display = 'none';
+                    }
+                } else {
+                    statusDiv.className = 'wifi-status wifi-disconnected';
+                    statusDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> No Internet Connection - Cannot activate';
+                    hotspotActive = false;
+                    document.getElementById('createBtn').style.display = 'inline-block';
+                    document.getElementById('stopBtn').style.display = 'none';
+                }
+
+                // Update interface options
+                const interfaceSelect = document.getElementById('networkInterface');
+                interfaceSelect.innerHTML = '';
+                data.interfaces.forEach(iface => {
+                    if (iface.type === 'WiFi') {
+                        const option = document.createElement('option');
+                        option.value = iface.name;
+                        option.textContent = `${iface.name} (${iface.type})`;
+                        interfaceSelect.appendChild(option);
+                    }
+                });
+
+                if (interfaceSelect.children.length === 0) {
+                    const option = document.createElement('option');
+                    option.value = 'wlan0';
+                    option.textContent = 'wlan0 (Default)';
+                    interfaceSelect.appendChild(option);
+                }
+
+            } catch (error) {
+                const statusDiv = document.getElementById('systemStatus');
+                statusDiv.className = 'wifi-status wifi-disconnected';
+                statusDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Error checking system status';
+            }
+        }
+
+        async function createBridge() {
+            const ssid = document.getElementById('hotspotName').value.trim();
+            const password = document.getElementById('hotspotPassword').value;
+            const interface = document.getElementById('networkInterface').value;
+
+            if (!ssid) {
+                showMessage('hotspotStatus', 'Please enter a hotspot name', 'error');
+                return;
+            }
+
+            if (password.length < 8) {
+                showMessage('hotspotStatus', 'Password must be at least 8 characters', 'error');
+                return;
+            }
+
+            showMessage('hotspotStatus', 'Creating hotspot...', 'info');
+
+            try {
+                const response = await fetch('/api/wifi/create_bridge', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        ssid: ssid,
+                        password: password,
+                        interface: interface
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showMessage('hotspotStatus', result.message, 'success');
+                    setTimeout(() => {
+                        checkStatus();
+                    }, 2000);
+                } else {
+                    showMessage('hotspotStatus', `Failed: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showMessage('hotspotStatus', 'Error creating hotspot. Please try again.', 'error');
+            }
+        }
+
+        async function stopBridge() {
+            showMessage('hotspotStatus', 'Stopping hotspot...', 'info');
+
+            try {
+                const response = await fetch('/api/wifi/stop_bridge', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showMessage('hotspotStatus', 'Hotspot stopped successfully', 'success');
+                    setTimeout(() => {
+                        checkStatus();
+                    }, 2000);
+                } else {
+                    showMessage('hotspotStatus', `Failed: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showMessage('hotspotStatus', 'Error stopping hotspot. Please try again.', 'error');
+            }
+        }
+
+        // Initial load
+        checkStatus();
+
+        // Auto refresh every 30 seconds
+        setInterval(checkStatus, 30000);
+    </script>
+</body>
+</html>

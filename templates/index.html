@@ -1,0 +1,398 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WiFi Cafe Manager</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.98);
+            padding: 50px;
+            border-radius: 25px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            max-width: 550px;
+            width: 100%;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-size: 4rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 25px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: #6c757d;
+            margin-bottom: 40px;
+            font-size: 1.2rem;
+            font-weight: 400;
+        }
+
+        .login-form {
+            margin-bottom: 35px;
+        }
+
+        .credential-info {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border-left: 5px solid #667eea;
+        }
+
+        .credential-info p {
+            color: #1976d2;
+            font-weight: 500;
+            margin: 0;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #555;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .input-container {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #667eea;
+            font-size: 1.2rem;
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 18px 18px 18px 50px;
+            border: 2px solid #e1e5e9;
+            border-radius: 15px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: #fff;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .char-limit {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px 35px;
+            border: none;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .admin-links {
+            margin-top: 35px;
+            padding-top: 25px;
+            border-top: 2px solid #e1e5e9;
+        }
+
+        .admin-links h4 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .admin-link {
+            display: inline-block;
+            color: #667eea;
+            text-decoration: none;
+            margin: 8px 12px;
+            padding: 12px 20px;
+            border: 2px solid #667eea;
+            border-radius: 25px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .admin-link:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .status-message {
+            margin-top: 25px;
+            padding: 18px 20px;
+            border-radius: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .error {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        .info {
+            background: linear-gradient(135deg, #cce7ff 0%, #99d3ff 100%);
+            color: #004085;
+            border: 2px solid #99d3ff;
+        }
+
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <i class="fas fa-wifi"></i>
+        </div>
+        <h1>WiFi Internet Cafe</h1>
+        <p class="subtitle">Secure Internet Access Portal</p>
+        
+        <div class="credential-info">
+            <p><i class="fas fa-info-circle"></i> <strong>Login Format:</strong> Username: 4 characters, Password: 6 characters</p>
+        </div>
+        
+        <div class="login-form">
+            <div class="form-group">
+                <label for="username">
+                    <i class="fas fa-user"></i> Username
+                </label>
+                <div class="input-container">
+                    <i class="fas fa-user input-icon"></i>
+                    <input type="text" id="username" placeholder="Enter 4-character username" maxlength="4">
+                </div>
+                <div class="char-limit" id="usernameCount">0/4 characters</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">
+                    <i class="fas fa-lock"></i> Password
+                </label>
+                <div class="input-container">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input type="password" id="password" placeholder="Enter 6-character password" maxlength="6">
+                </div>
+                <div class="char-limit" id="passwordCount">0/6 characters</div>
+            </div>
+            
+            <button class="btn" onclick="userLogin()" id="loginBtn">
+                <i class="fas fa-globe"></i> Connect to Internet
+            </button>
+        </div>
+
+        <div id="statusMessage"></div>
+
+        <div class="admin-links">
+            <h4><i class="fas fa-cogs"></i> Administration</h4>
+            <a href="/admin" class="admin-link">
+                <i class="fas fa-shield-alt"></i> Admin Panel
+            </a>
+            <a href="/sessions" class="admin-link">
+                <i class="fas fa-users"></i> Active Sessions
+            </a>
+            <a href="/wifi" class="admin-link">
+                <i class="fas fa-wifi"></i> WiFi Bridge
+            </a>
+        </div>
+    </div>
+
+    <script>
+        let isLoading = false;
+
+        // Character count updates
+        document.getElementById('username').addEventListener('input', function() {
+            const count = this.value.length;
+            document.getElementById('usernameCount').textContent = `${count}/4 characters`;
+        });
+
+        document.getElementById('password').addEventListener('input', function() {
+            const count = this.value.length;
+            document.getElementById('passwordCount').textContent = `${count}/6 characters`;
+        });
+
+        function showMessage(message, type) {
+            const statusDiv = document.getElementById('statusMessage');
+            const iconClass = type === 'success' ? 'fas fa-check-circle' : 
+                             type === 'error' ? 'fas fa-exclamation-triangle' : 'fas fa-info-circle';
+            statusDiv.innerHTML = `<div class="status-message ${type}"><i class="${iconClass}"></i>${message}</div>`;
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                statusDiv.innerHTML = '';
+            }, 5000);
+        }
+
+        async function userLogin() {
+            if (isLoading) return;
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!username || !password) {
+                showMessage('Please enter both username and password', 'error');
+                return;
+            }
+
+            if (username.length !== 4) {
+                showMessage('Username must be exactly 4 characters', 'error');
+                return;
+            }
+
+            if (password.length !== 6) {
+                showMessage('Password must be exactly 6 characters', 'error');
+                return;
+            }
+
+            // Show loading state
+            isLoading = true;
+            const loginBtn = document.getElementById('loginBtn');
+            const originalContent = loginBtn.innerHTML;
+            loginBtn.innerHTML = '<div class="spinner"></div> Connecting...';
+            loginBtn.classList.add('loading');
+
+            try {
+                const response = await fetch('/api/user/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showMessage(`🎉 ${result.message}`, 'success');
+                    document.getElementById('username').value = '';
+                    document.getElementById('password').value = '';
+                    document.getElementById('usernameCount').textContent = '0/4 characters';
+                    document.getElementById('passwordCount').textContent = '0/6 characters';
+                    
+                    // Redirect to success page if provided
+                    if (result.redirect) {
+                        setTimeout(() => {
+                            window.location.href = result.redirect;
+                        }, 2000);
+                    }
+                } else {
+                    showMessage(result.message, 'error');
+                }
+            } catch (error) {
+                showMessage('Connection error. Please try again.', 'error');
+            } finally {
+                // Reset loading state
+                isLoading = false;
+                loginBtn.innerHTML = originalContent;
+                loginBtn.classList.remove('loading');
+            }
+        }
+
+        // Allow Enter key to submit
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !isLoading) {
+                userLogin();
+            }
+        });
+
+        // Auto-focus on username field
+        document.getElementById('username').focus();
+    </script>
+</body>
+</html>

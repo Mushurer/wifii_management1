@@ -1,0 +1,391 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WiFi Internet Access - Login Required</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .portal-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .wifi-icon {
+            font-size: 4rem;
+            color: #667eea;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .portal-title {
+            color: #333;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .portal-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .wifi-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+
+        .wifi-info h3 {
+            color: #1976d2;
+            margin-bottom: 5px;
+        }
+
+        .wifi-info p {
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        .login-form {
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        .input-container {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #667eea;
+            font-size: 1.1rem;
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: #fff;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .login-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-bottom: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .login-btn:disabled:hover {
+            box-shadow: none;
+        }
+
+        .status-message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 500;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .info {
+            background: #cce7ff;
+            color: #004085;
+            border: 1px solid #99d3ff;
+        }
+
+        .loading {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .footer-info {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e1e5e9;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .btn-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .connection-status {
+            background: #e8f5e8;
+            border: 2px solid #4caf50;
+            color: #2e7d32;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="portal-container">
+        <div class="wifi-icon">
+            <i class="fas fa-wifi"></i>
+        </div>
+        
+        <h1 class="portal-title">Internet Access Required</h1>
+        <p class="portal-subtitle">Please log in to access the internet</p>
+        
+        <div class="wifi-info">
+            <h3><i class="fas fa-info-circle"></i> WiFi Connection Detected</h3>
+            <p>You are connected to our WiFi network. Please enter your login credentials to access the internet.</p>
+        </div>
+
+        <div class="login-form">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <div class="input-container">
+                    <i class="fas fa-user input-icon"></i>
+                    <input type="text" id="username" placeholder="Enter your username" autofocus>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-container">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input type="password" id="password" placeholder="Enter your password">
+                </div>
+            </div>
+            
+            <button class="login-btn" onclick="portalLogin()" id="loginBtn">
+                <div class="btn-content">
+                    <div class="spinner" id="spinner"></div>
+                    <i class="fas fa-globe" id="loginIcon"></i>
+                    <span id="loginText">Connect to Internet</span>
+                </div>
+            </button>
+        </div>
+
+        <div id="statusMessage"></div>
+
+        <div class="footer-info">
+            <p><i class="fas fa-shield-alt"></i> Secure WiFi Connection</p>
+            <p>Contact the cafe staff for login credentials</p>
+        </div>
+    </div>
+
+    <script>
+        let isLoading = false;
+
+        function showMessage(message, type) {
+            const statusDiv = document.getElementById('statusMessage');
+            statusDiv.innerHTML = `<div class="status-message ${type}">${message}</div>`;
+        }
+
+        function setLoading(loading) {
+            isLoading = loading;
+            const btn = document.getElementById('loginBtn');
+            const spinner = document.getElementById('spinner');
+            const icon = document.getElementById('loginIcon');
+            const text = document.getElementById('loginText');
+
+            if (loading) {
+                btn.disabled = true;
+                spinner.style.display = 'inline-block';
+                icon.style.display = 'none';
+                text.textContent = 'Connecting...';
+            } else {
+                btn.disabled = false;
+                spinner.style.display = 'none';
+                icon.style.display = 'inline-block';
+                text.textContent = 'Connect to Internet';
+            }
+        }
+
+        async function portalLogin() {
+            if (isLoading) return;
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (!username || !password) {
+                showMessage('<i class="fas fa-exclamation-triangle"></i> Please enter both username and password', 'error');
+                return;
+            }
+
+            setLoading(true);
+            showMessage('<i class="fas fa-spinner fa-spin"></i> Authenticating...', 'loading');
+
+            try {
+                const response = await fetch('/api/portal/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showMessage(`<i class="fas fa-check-circle"></i> ${result.message}`, 'success');
+                    
+                    // Clear form
+                    document.getElementById('username').value = '';
+                    document.getElementById('password').value = '';
+                    
+                    // Redirect to success page after a short delay
+                    setTimeout(() => {
+                        if (result.redirect) {
+                            window.location.href = result.redirect;
+                        } else {
+                            // Try to redirect to a common website to test connectivity
+                            window.location.href = 'https://www.google.com';
+                        }
+                    }, 2000);
+                } else {
+                    showMessage(`<i class="fas fa-times-circle"></i> ${result.message}`, 'error');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showMessage('<i class="fas fa-exclamation-triangle"></i> Connection error. Please try again.', 'error');
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        // Allow Enter key to submit
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !isLoading) {
+                portalLogin();
+            }
+        });
+
+        // Auto-focus on username field
+        document.getElementById('username').focus();
+
+        // Check if we're being redirected from a captive portal detection
+        if (window.location.search.includes('redirect') || document.referrer.includes('generate_204')) {
+            showMessage('<i class="fas fa-info-circle"></i> Internet access required. Please log in to continue.', 'info');
+        }
+    </script>
+</body>
+</html>
